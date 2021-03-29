@@ -23,20 +23,24 @@ function countDepth(tree::Node)::Int
     end
 end
 
-function stringOp(op::F, tree::Node, options::Options;
-                  bracketed::Bool=false,
-                  varMap::Union{Array{String, 1}, Nothing}=nothing)::String where {F}
+function stringOp(
+    op::F,
+    tree::Node,
+    options::Options;
+    bracketed::Bool = false,
+    varMap::Union{Array{String,1},Nothing} = nothing,
+)::String where {F}
     if op in [+, -, *, /, ^]
-        l = stringTree(tree.l, options, bracketed=false, varMap=varMap)
-        r = stringTree(tree.r, options, bracketed=false, varMap=varMap)
+        l = stringTree(tree.l, options, bracketed = false, varMap = varMap)
+        r = stringTree(tree.r, options, bracketed = false, varMap = varMap)
         if bracketed
             return "$l $(string(op)) $r"
         else
             return "($l $(string(op)) $r)"
         end
     else
-        l = stringTree(tree.l, options, bracketed=true, varMap=varMap)
-        r = stringTree(tree.r, options, bracketed=true, varMap=varMap)
+        l = stringTree(tree.l, options, bracketed = true, varMap = varMap)
+        r = stringTree(tree.r, options, bracketed = true, varMap = varMap)
         return "$(string(op))($l, $r)"
     end
 end
@@ -51,9 +55,12 @@ Convert an equation to a string.
 - `varMap::Union{Array{String, 1}, Nothing}=nothing`: what variables
     to print for each feature.
 """
-function stringTree(tree::Node, options::Options;
-                    bracketed::Bool=false,
-                    varMap::Union{Array{String, 1}, Nothing}=nothing)::String
+function stringTree(
+    tree::Node,
+    options::Options;
+    bracketed::Bool = false,
+    varMap::Union{Array{String,1},Nothing} = nothing,
+)::String
     if tree.degree == 0
         if tree.constant
             return string(tree.val)
@@ -67,13 +74,23 @@ function stringTree(tree::Node, options::Options;
     elseif tree.degree == 1
         return "$(options.unaops[tree.op])($(stringTree(tree.l, options, bracketed=true, varMap=varMap)))"
     else
-        return stringOp(options.binops[tree.op], tree, options, bracketed=bracketed, varMap=varMap)
+        return stringOp(
+            options.binops[tree.op],
+            tree,
+            options,
+            bracketed = bracketed,
+            varMap = varMap,
+        )
     end
 end
 
 # Print an equation
-function printTree(tree::Node, options::Options; varMap::Union{Array{String, 1}, Nothing}=nothing)
-    println(stringTree(tree, options, varMap=varMap))
+function printTree(
+    tree::Node,
+    options::Options;
+    varMap::Union{Array{String,1},Nothing} = nothing,
+)
+    println(stringTree(tree, options, varMap = varMap))
 end
 
 # Count the number of unary operators in the equation

@@ -4,14 +4,14 @@ import SpecialFunctions: erf, erfc
 
 function gamma(x::T)::T where {T<:Real}
     if x <= T(0) && abs(x % 1) < T(1e-6)
-        T(1//100000000)
+        T(1 // 100000000)
     else
         SpecialFunctions.gamma(x)
     end
 end
 gamma(x) = SpecialFunctions.gamma(x)
 
-atanh_clip(x) = atanh(mod(x+1, 2) - 1)
+atanh_clip(x) = atanh(mod(x + 1, 2) - 1)
 
 # Implicitly defined:
 #binary: mod
@@ -20,34 +20,34 @@ atanh_clip(x) = atanh(mod(x+1, 2) - 1)
 # Use some fast operators from https://github.com/JuliaLang/julia/blob/81597635c4ad1e8c2e1c5753fda4ec0e7397543f/base/fastmath.jl
 # Define allowed operators. Any julia operator can also be used.
 function plus(x::T, y::T)::T where {T<:Real}
-	x + y #Do not change the name of this operator.
+    x + y #Do not change the name of this operator.
 end
 function sub(x::T, y::T)::T where {T<:Real}
-	x - y #Do not change the name of this operator.
+    x - y #Do not change the name of this operator.
 end
 function mult(x::T, y::T)::T where {T<:Real}
-	x * y #Do not change the name of this operator.
+    x * y #Do not change the name of this operator.
 end
 function square(x::T)::T where {T<:Real}
-	x * x
+    x * x
 end
 function cube(x::T)::T where {T<:Real}
-	x ^ 3
+    x^3
 end
 function pow(x::T, y::T)::T where {T<:Real}
-	abs(x)^y
+    abs(x)^y
 end
 function div(x::T, y::T)::T where {T<:Real}
-	x / y
+    x / y
 end
 function log_abs(x::T)::T where {T<:Real}
-    log(abs(x) + convert(T, 1//100000000))
+    log(abs(x) + convert(T, 1 // 100000000))
 end
 function log2_abs(x::T)::T where {T<:Real}
-    log2(abs(x) + convert(T, 1//100000000))
+    log2(abs(x) + convert(T, 1 // 100000000))
 end
 function log10_abs(x::T)::T where {T<:Real}
-    log10(abs(x) + convert(T, 1//100000000))
+    log10(abs(x) + convert(T, 1 // 100000000))
 end
 function log1p_abs(x::T)::T where {T<:Real}
     log(abs(x) + convert(T, 1))
@@ -64,17 +64,17 @@ sub(x, y) = x - y
 mult(x, y) = x * y
 pow(x, y) = abs(x)^y
 div(x, y) = x / y
-log_abs(x) = log(abs(x) + 1//100000000)
-log2_abs(x) = log2(abs(x) + 1//100000000)
-log10_abs(x) = log10(abs(x) + 1//100000000)
+log_abs(x) = log(abs(x) + 1 // 100000000)
+log2_abs(x) = log2(abs(x) + 1 // 100000000)
+log10_abs(x) = log10(abs(x) + 1 // 100000000)
 log1p_abs(x) = log(abs(x) + 1)
 acosh_abs(x) = acosh(abs(x) + 1)
 
 function sqrt_abs(x::T)::T where {T}
-	sqrt(abs(x))
+    sqrt(abs(x))
 end
 function neg(x::T)::T where {T}
-	- x
+    -x
 end
 
 function greater(x::T, y::T)::T where {T}

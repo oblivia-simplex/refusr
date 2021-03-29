@@ -4,7 +4,18 @@ using LossFunctions
 #TODO - eventually move some of these
 # into the SR call itself, rather than
 # passing huge options at once.
-@from "Operators.jl" import plus, pow, mult, sub, div, log_abs, log10_abs, log2_abs, log1p_abs, sqrt_abs, acosh_abs, atanh_clip
+@from "Operators.jl" import plus,
+    pow,
+    mult,
+    sub,
+    div,
+    log_abs,
+    log10_abs,
+    log2_abs,
+    log1p_abs,
+    sqrt_abs,
+    acosh_abs,
+    atanh_clip
 @from "Equation.jl" import Node
 
 """
@@ -13,9 +24,14 @@ using LossFunctions
 
 Build constraints on operator-level complexity from a user-passed dict.
 """
-function build_constraints(una_constraints, bin_constraints,
-                           unary_operators, binary_operators,
-                           nuna, nbin)::Tuple{Array{Int, 1}, Array{Tuple{Int,Int}, 1}}
+function build_constraints(
+    una_constraints,
+    bin_constraints,
+    unary_operators,
+    binary_operators,
+    nuna,
+    nbin,
+)::Tuple{Array{Int,1},Array{Tuple{Int,Int},1}}
     # Expect format ((*)=>(-1, 3)), etc.
     # TODO: Need to disable simplification if (*, -, +, /) are constrained?
     #  Or, just quit simplification is constraints violated.
@@ -31,7 +47,7 @@ function build_constraints(una_constraints, bin_constraints,
     end
 
     if una_constraints == nothing
-        una_constraints = [-1 for i=1:nuna]
+        una_constraints = [-1 for i = 1:nuna]
     elseif !is_una_constraints_already_done
         una_constraints::Dict
         _una_constraints = Int[]
@@ -47,7 +63,7 @@ function build_constraints(una_constraints, bin_constraints,
         una_constraints = _una_constraints
     end
     if bin_constraints == nothing
-        bin_constraints = [(-1, -1) for i=1:nbin]
+        bin_constraints = [(-1, -1) for i = 1:nbin]
     elseif !is_bin_constraints_already_done
         bin_constraints::Dict
         _bin_constraints = Tuple{Int,Int}[]
@@ -104,8 +120,8 @@ struct Options{A,B,C<:Union{SupervisedLoss,Function}}
 
     binops::A
     unaops::B
-    bin_constraints::Array{Tuple{Int,Int}, 1}
-    una_constraints::Array{Int, 1}
+    bin_constraints::Array{Tuple{Int,Int},1}
+    una_constraints::Array{Int,1}
     ns::Int
     parsimony::Float32
     alpha::Float32
@@ -122,7 +138,7 @@ struct Options{A,B,C<:Union{SupervisedLoss,Function}}
     annealing::Bool
     batching::Bool
     batchSize::Int
-    mutationWeights::Array{Float64, 1}
+    mutationWeights::Array{Float64,1}
     warmupMaxsizeBy::Float32
     useFrequency::Bool
     npop::Int
@@ -133,10 +149,10 @@ struct Options{A,B,C<:Union{SupervisedLoss,Function}}
     probNegate::Float32
     nuna::Int
     nbin::Int
-    seed::Union{Int, Nothing}
+    seed::Union{Int,Nothing}
     loss::C
     progress::Bool
-    terminal_width::Union{Int, Nothing}
+    terminal_width::Union{Int,Nothing}
     optimizer_algorithm::String
     optimize_probability::Float32
     optimizer_nrestarts::Int
@@ -252,53 +268,64 @@ Construct options for `EquationSearch` and other functions.
     have no effect).
 """
 function Options(;
-    binary_operators::NTuple{nbin, Any}=(div, plus, mult),
-    unary_operators::NTuple{nuna, Any}=(exp, cos),
-    constraints=nothing,
-    loss=L2DistLoss(),
-    ns=10, #1 sampled from every ns per mutation
-    topn=10, #samples to return per population
-    parsimony=0.000100f0,
-    alpha=0.100000f0,
-    maxsize=20,
-    maxdepth=nothing,
-    fast_cycle=false,
-    migration=true,
-    hofMigration=true,
-    fractionReplacedHof=0.1f0,
-    shouldOptimizeConstants=true,
-    hofFile=nothing,
-    npopulations=nothing,
-    perturbationFactor=1.000000f0,
-    annealing=true,
-    batching=false,
-    batchSize=50,
-    mutationWeights=[10.000000, 1.000000, 1.000000, 3.000000, 3.000000, 0.010000, 1.000000, 1.000000],
-    warmupMaxsizeBy=0f0,
-    useFrequency=false,
-    npop=1000,
-    ncyclesperiteration=300,
-    fractionReplaced=0.1f0,
-    verbosity=convert(Int, 1e9),
-    probNegate=0.01f0,
-    seed=nothing,
-    bin_constraints=nothing,
-    una_constraints=nothing,
-    progress=false,
-    terminal_width=nothing,
-    warmupMaxsize=nothing,
-    optimizer_algorithm="NelderMead",
-    optimizer_nrestarts=3,
-    optimize_probability=0.1f0,
-    optimizer_iterations=100,
-    nrestarts=nothing,
-   ) where {nuna,nbin}
+    binary_operators::NTuple{nbin,Any} = (div, plus, mult),
+    unary_operators::NTuple{nuna,Any} = (exp, cos),
+    constraints = nothing,
+    loss = L2DistLoss(),
+    ns = 10, #1 sampled from every ns per mutation
+    topn = 10, #samples to return per population
+    parsimony = 0.000100f0,
+    alpha = 0.100000f0,
+    maxsize = 20,
+    maxdepth = nothing,
+    fast_cycle = false,
+    migration = true,
+    hofMigration = true,
+    fractionReplacedHof = 0.1f0,
+    shouldOptimizeConstants = true,
+    hofFile = nothing,
+    npopulations = nothing,
+    perturbationFactor = 1.000000f0,
+    annealing = true,
+    batching = false,
+    batchSize = 50,
+    mutationWeights = [
+        10.000000,
+        1.000000,
+        1.000000,
+        3.000000,
+        3.000000,
+        0.010000,
+        1.000000,
+        1.000000,
+    ],
+    warmupMaxsizeBy = 0.0f0,
+    useFrequency = false,
+    npop = 1000,
+    ncyclesperiteration = 300,
+    fractionReplaced = 0.1f0,
+    verbosity = convert(Int, 1e9),
+    probNegate = 0.01f0,
+    seed = nothing,
+    bin_constraints = nothing,
+    una_constraints = nothing,
+    progress = false,
+    terminal_width = nothing,
+    warmupMaxsize = nothing,
+    optimizer_algorithm = "NelderMead",
+    optimizer_nrestarts = 3,
+    optimize_probability = 0.1f0,
+    optimizer_iterations = 100,
+    nrestarts = nothing,
+) where {nuna,nbin}
 
     if nrestarts != nothing
         optimizer_nrestarts = nrestarts
     end
     if warmupMaxsize != nothing
-        error("warmupMaxsize is deprecated. Please use warmupMaxsizeBy, and give the time at which the warmup will end as a fraction of the total search cycles.")
+        error(
+            "warmupMaxsize is deprecated. Please use warmupMaxsizeBy, and give the time at which the warmup will end as a fraction of the total search cycles.",
+        )
     end
 
     if hofFile == nothing
@@ -306,9 +333,9 @@ function Options(;
     end
 
     @assert maxsize > 3
-    @assert warmupMaxsizeBy >= 0f0
+    @assert warmupMaxsizeBy >= 0.0f0
 
-    constraints::Union{Tuple,Array{Pair{Any,Any}, 1},Nothing}
+    constraints::Union{Tuple,Array{Pair{Any,Any},1},Nothing}
 
 
     if typeof(constraints) <: Tuple
@@ -328,9 +355,14 @@ function Options(;
         una_constraints = constraints
     end
 
-    una_constraints, bin_constraints = build_constraints(una_constraints, bin_constraints,
-                                                         unary_operators, binary_operators,
-                                                         nuna, nbin)
+    una_constraints, bin_constraints = build_constraints(
+        una_constraints,
+        bin_constraints,
+        unary_operators,
+        binary_operators,
+        nuna,
+        nbin,
+    )
 
     if maxdepth == nothing
         maxdepth = maxsize
@@ -343,7 +375,7 @@ function Options(;
     binary_operators = map(binopmap, binary_operators)
     unary_operators = map(unaopmap, unary_operators)
 
-    mutationWeights = map((x,)->convert(Float64, x), mutationWeights)
+    mutationWeights = map((x,) -> convert(Float64, x), mutationWeights)
     if length(mutationWeights) != 8
         error("Not the right number of mutation probabilities given")
     end
@@ -358,9 +390,13 @@ function Options(;
             continue
         end
         @eval begin
-            Base.$_f(l::Node, r::Node)::Node = (l.constant && r.constant) ? Node($f(l.val, r.val)::AbstractFloat) : Node($op, l, r)
-            Base.$_f(l::Node, r::AbstractFloat)::Node =        l.constant ? Node($f(l.val, r)::AbstractFloat)     : Node($op, l, r)
-            Base.$_f(l::AbstractFloat, r::Node)::Node =        r.constant ? Node($f(l, r.val)::AbstractFloat)     : Node($op, l, r)
+            Base.$_f(l::Node, r::Node)::Node =
+                (l.constant && r.constant) ? Node($f(l.val, r.val)::AbstractFloat) :
+                Node($op, l, r)
+            Base.$_f(l::Node, r::AbstractFloat)::Node =
+                l.constant ? Node($f(l.val, r)::AbstractFloat) : Node($op, l, r)
+            Base.$_f(l::AbstractFloat, r::Node)::Node =
+                r.constant ? Node($f(l, r.val)::AbstractFloat) : Node($op, l, r)
         end
     end
 
@@ -369,7 +405,8 @@ function Options(;
             continue
         end
         @eval begin
-            Base.$f(l::Node)::Node = l.constant ? Node($f(l.val)::AbstractFloat) : Node($op, l)
+            Base.$f(l::Node)::Node =
+                l.constant ? Node($f(l.val)::AbstractFloat) : Node($op, l)
         end
     end
 
@@ -377,7 +414,45 @@ function Options(;
         verbosity = 0
     end
 
-    Options{typeof(binary_operators),typeof(unary_operators), typeof(loss)}(binary_operators, unary_operators, bin_constraints, una_constraints, ns, parsimony, alpha, maxsize, maxdepth, fast_cycle, migration, hofMigration, fractionReplacedHof, shouldOptimizeConstants, hofFile, npopulations, perturbationFactor, annealing, batching, batchSize, mutationWeights, warmupMaxsizeBy, useFrequency, npop, ncyclesperiteration, fractionReplaced, topn, verbosity, probNegate, nuna, nbin, seed, loss, progress, terminal_width, optimizer_algorithm, optimize_probability, optimizer_nrestarts, optimizer_iterations)
+    Options{typeof(binary_operators),typeof(unary_operators),typeof(loss)}(
+        binary_operators,
+        unary_operators,
+        bin_constraints,
+        una_constraints,
+        ns,
+        parsimony,
+        alpha,
+        maxsize,
+        maxdepth,
+        fast_cycle,
+        migration,
+        hofMigration,
+        fractionReplacedHof,
+        shouldOptimizeConstants,
+        hofFile,
+        npopulations,
+        perturbationFactor,
+        annealing,
+        batching,
+        batchSize,
+        mutationWeights,
+        warmupMaxsizeBy,
+        useFrequency,
+        npop,
+        ncyclesperiteration,
+        fractionReplaced,
+        topn,
+        verbosity,
+        probNegate,
+        nuna,
+        nbin,
+        seed,
+        loss,
+        progress,
+        terminal_width,
+        optimizer_algorithm,
+        optimize_probability,
+        optimizer_nrestarts,
+        optimizer_iterations,
+    )
 end
-
-

@@ -4,15 +4,26 @@ using FromFile
 @from "LossFunctions.jl" import scoreFunc, scoreFuncBatch
 @from "CheckConstraints.jl" import check_constraints
 @from "PopMember.jl" import PopMember
-@from "MutationFunctions.jl" import genRandomTree, mutateConstant, mutateOperator, appendRandomOp, prependRandomOp, insertRandomOp, deleteRandomOp
+@from "MutationFunctions.jl" import genRandomTree,
+    mutateConstant,
+    mutateOperator,
+    appendRandomOp,
+    prependRandomOp,
+    insertRandomOp,
+    deleteRandomOp
 @from "SimplifyEquation.jl" import simplifyTree, combineOperators, simplifyWithSymbolicUtils
 
 # Go through one simulated options.annealing mutation cycle
 #  exp(-delta/T) defines probability of accepting a change
-function nextGeneration(dataset::Dataset{T},
-                        baseline::T, member::PopMember, temperature::T,
-                        curmaxsize::Int, frequencyComplexity::AbstractVector{T},
-                        options::Options)::PopMember where {T<:Real}
+function nextGeneration(
+    dataset::Dataset{T},
+    baseline::T,
+    member::PopMember,
+    temperature::T,
+    curmaxsize::Int,
+    frequencyComplexity::AbstractVector{T},
+    options::Options,
+)::PopMember where {T<:Real}
 
     prev = member.tree
     tree = prev
@@ -27,7 +38,7 @@ function nextGeneration(dataset::Dataset{T},
 
     mutationChoice = rand()
     #More constants => more likely to do constant mutation
-    weightAdjustmentMutateConstant = min(8, countConstants(prev))/8.0
+    weightAdjustmentMutateConstant = min(8, countConstants(prev)) / 8.0
     cur_weights = copy(options.mutationWeights) .* 1.0
     cur_weights[1] *= weightAdjustmentMutateConstant
     n = countNodes(prev)
@@ -46,7 +57,7 @@ function nextGeneration(dataset::Dataset{T},
     is_success_always_possible = true
     attempts = 0
     max_attempts = 10
-    
+
     #############################################
     # Mutations
     #############################################
@@ -101,7 +112,8 @@ function nextGeneration(dataset::Dataset{T},
             return PopMember(tree, beforeLoss)
         end
 
-        successful_mutation = successful_mutation && check_constraints(tree, options, curmaxsize)
+        successful_mutation =
+            successful_mutation && check_constraints(tree, options, curmaxsize)
 
         attempts += 1
     end
@@ -124,7 +136,7 @@ function nextGeneration(dataset::Dataset{T},
     probChange = 1.0
     if options.annealing
         delta = afterLoss - beforeLoss
-        probChange *= exp(-delta/(temperature*options.alpha))
+        probChange *= exp(-delta / (temperature * options.alpha))
     end
     if options.useFrequency
         oldSize = countNodes(prev)

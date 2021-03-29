@@ -11,17 +11,22 @@ function flagBinOperatorComplexity(tree::Node, ::Val{op}, options::Options)::Boo
     else
         if tree.op == op
             overly_complex::Bool = (
-                    ((options.bin_constraints[op][1]::Int > -1) &&
-                     (countNodes(tree.l) > options.bin_constraints[op][1]::Int))
-                      ||
-                    ((options.bin_constraints[op][2]::Int > -1) &&
-                     (countNodes(tree.r) > options.bin_constraints[op][2]::Int))
+                (
+                    (options.bin_constraints[op][1]::Int > -1) &&
+                    (countNodes(tree.l) > options.bin_constraints[op][1]::Int)
+                ) || (
+                    (options.bin_constraints[op][2]::Int > -1) &&
+                    (countNodes(tree.r) > options.bin_constraints[op][2]::Int)
                 )
+            )
             if overly_complex
                 return true
             end
         end
-        return (flagBinOperatorComplexity(tree.l, Val(op), options) || flagBinOperatorComplexity(tree.r, Val(op), options))
+        return (
+            flagBinOperatorComplexity(tree.l, Val(op), options) ||
+            flagBinOperatorComplexity(tree.r, Val(op), options)
+        )
     end
 end
 
@@ -32,16 +37,19 @@ function flagUnaOperatorComplexity(tree::Node, ::Val{op}, options::Options)::Boo
     elseif tree.degree == 1
         if tree.op == op
             overly_complex::Bool = (
-                      (options.una_constraints[op]::Int > -1) &&
-                      (countNodes(tree.l) > options.una_constraints[op]::Int)
-                )
+                (options.una_constraints[op]::Int > -1) &&
+                (countNodes(tree.l) > options.una_constraints[op]::Int)
+            )
             if overly_complex
                 return true
             end
         end
         return flagUnaOperatorComplexity(tree.l, Val(op), options)
     else
-        return (flagUnaOperatorComplexity(tree.l, Val(op), options) || flagUnaOperatorComplexity(tree.r, Val(op), options))
+        return (
+            flagUnaOperatorComplexity(tree.l, Val(op), options) ||
+            flagUnaOperatorComplexity(tree.r, Val(op), options)
+        )
     end
 end
 
@@ -50,14 +58,14 @@ function check_constraints(tree::Node, options::Options, maxsize::Int)::Bool
     if countNodes(tree) > maxsize
         return false
     end
-    for i=1:options.nbin
+    for i = 1:options.nbin
         if options.bin_constraints[i] == (-1, -1)
             continue
         elseif flagBinOperatorComplexity(tree, Val(i), options)
             return false
         end
     end
-    for i=1:options.nuna
+    for i = 1:options.nuna
         if options.una_constraints[i] == -1
             continue
         elseif flagUnaOperatorComplexity(tree, Val(i), options)

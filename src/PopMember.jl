@@ -38,9 +38,12 @@ Automatically compute the score for this tree.
 - `t::Node`: The tree for the population member.
 - `options::Options`: What options to use.
 """
-function PopMember(dataset::Dataset{T},
-                   baseline::T, t::Node,
-                   options::Options) where {T<:Real}
+function PopMember(
+    dataset::Dataset{T},
+    baseline::T,
+    t::Node,
+    options::Options,
+) where {T<:Real}
     PopMember(t, scoreFunc(dataset, baseline, t, options))
 end
 
